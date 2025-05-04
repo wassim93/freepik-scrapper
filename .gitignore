@@ -1,0 +1,28 @@
+# Root .gitignore
+
+# Node.js / Monorepo
+node_modules/
+package-lock.json
+
+# Build output
+/dist/
+/build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Server
+/server/node_modules/
+/server/.env
+
+# Client
+/client/node_modules/
+/client/dist/
+/client/build/
+
+# Environment
+.env
+
+# Logs
+*.log
+npm-debug.log*

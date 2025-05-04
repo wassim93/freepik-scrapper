@@ -1,0 +1,27 @@
+{
+  "name": "my-monorepo",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "client",
+      "server"
+    ]
+  },
+  "scripts": {
+    "lint": "npm run lint:client && npm run lint:server",
+    "lint:client": "eslint --ext .ts,.tsx client/src",
+    "lint:server": "eslint --ext .ts server/src",
+    "lint:fix": "npm run lint:client -- --fix && npm run lint:server -- --fix",
+    "format": "prettier --write client/src/**/*.{ts,tsx} server/src/**/*.{ts}"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.3.1",
+    "eslint-plugin-react": "^7.37.5",
+    "prettier": "^3.5.3"
+  }
+}

@@ -1,0 +1,112 @@
+/* Global styles */
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f4f4f4;
+}
+
+/* Container */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header */
+.app-header {
+  text-align: center;
+  padding: 20px 0;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Main content */
+.app-main {
+  padding: 20px;
+  background-color: #fff;
+  margin-top: 20px;
+  border-radius: 8px;
+}
+
+/* Footer */
+.app-footer {
+  text-align: center;
+  padding: 15px 0;
+  color: #666;
+  font-size: 14px;
+}
+
+/* Card components */
+.card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.scraper-card,
+.generator-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Form elements */
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.submit-button:disabled {
+  background-color: #999;
+}
+
+/* Error messages */
+.error-message {
+  color: #dc3545;
+  margin-top: 10px;
+}
+
+/* Steps */
+.steps-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.step h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
