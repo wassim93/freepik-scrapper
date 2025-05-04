@@ -2,7 +2,7 @@
 
 # Node.js / Monorepo
 node_modules/
-.vscode
+/.vscode
 package-lock.json
 
 # Build output
