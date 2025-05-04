@@ -6,3 +6,4 @@ dist/
 public/
 build/
 coverage/
+.eslintrc.cjs

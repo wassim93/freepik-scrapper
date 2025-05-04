@@ -1,17 +1,17 @@
-// Root .eslintrc.js
-export default {
+// .eslintrc.cjs
+module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint', 'react', 'node'],
+  plugins: ['@typescript-eslint', 'react'],
   extends: [
     'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended', // ← Less heavy than "recommended"
-    'plugin:@typescript-eslint/recommended', // ← Only for type-aware rules
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
   ],
   parserOptions: {
-    ecmaVersion: 2020,
+    ecmaVersion: 2021,
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
@@ -21,10 +21,9 @@ export default {
     react: { version: 'detect' },
   },
   rules: {
-    // Only keep essential rules
     'no-extra-semi': ['error'],
     'no-console': ['warn'],
-    '@typescript-eslint/no-explicit-any': 'off', // ← Heavy rule - disable if not needed
+    '@typescript-eslint/no-explicit-any': 'off',
     'prefer-const': ['error'],
   },
   overrides: [
@@ -37,10 +36,15 @@ export default {
     },
     {
       files: ['server/src/**/*.ts'],
+      env: {
+        node: true, // ← Ensures 'module' is defined
+        es2021: true,
+      },
       extends: ['plugin:node/recommended'],
       rules: {
         'node/no-unpublished-import': 'off',
         'node/no-missing-import': 'off',
+        'node/no-unsupported-features/es-syntax': 'off', // ← Optional: Disable if not needed
       },
     },
   ],

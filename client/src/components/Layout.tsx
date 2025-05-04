@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react'
 //import "./Layout.css";
 
 interface LayoutProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
@@ -18,5 +18,5 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <p>© {new Date().getFullYear()} Freepik AI Tool</p>
       </footer>
     </div>
-  );
-};
+  )
+}

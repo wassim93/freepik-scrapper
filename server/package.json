@@ -1,5 +1,6 @@
 {
   "name": "freepik-scrapper-backend-mvc",
+  "type": "module",
   "version": "1.0.0",
   "description": "A fullstack project to scrape Freepik and generate images using AI.",
   "main": "src/index.ts",

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { scrapeAssets } from '../services/api'
-import { ScrapingRequest } from '../types'
 //import "./ScraperControl.css";
 
 interface ScraperProps {

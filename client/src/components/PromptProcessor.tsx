@@ -1,11 +1,10 @@
-import React, { useState } from "react";
-import { generateImages } from "../services/api";
-import { GenerationRequest } from "../types";
+import React, { useState } from 'react'
+import { generateImages } from '../services/api'
 //import "./PromptProcessor.css";
 
 interface GeneratorProps {
-  filePath: string;
-  onGenerationComplete: (images: any[]) => void;
+  filePath: string
+  onGenerationComplete: (images: any[]) => void
 }
 
 export const PromptProcessor: React.FC<GeneratorProps> = ({
@@ -13,27 +12,27 @@ export const PromptProcessor: React.FC<GeneratorProps> = ({
   onGenerationComplete,
 }) => {
   const [promptTemplate, setPromptTemplate] = useState(
-    "Create a modern design based on {assetName}"
-  );
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+    'Create a modern design based on {assetName}'
+  )
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
 
     try {
-      const result = await generateImages({ filePath, promptTemplate });
+      const result = await generateImages({ filePath, promptTemplate })
       if (result.success) {
-        onGenerationComplete(result.data.generatedImages);
+        onGenerationComplete(result.data.generatedImages)
       }
     } catch (err: any) {
-      setError(err.message || "Image generation failed");
+      setError(err.message || 'Image generation failed')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <div className="generator-card">
@@ -54,11 +53,11 @@ export const PromptProcessor: React.FC<GeneratorProps> = ({
         </div>
 
         <button type="submit" disabled={loading} className="submit-button">
-          {loading ? "Generating..." : "Generate Images"}
+          {loading ? 'Generating...' : 'Generate Images'}
         </button>
 
         {error && <div className="error-message">{error}</div>}
       </form>
     </div>
-  );
-};
+  )
+}
