@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { generateImages } from '../services/api'
+import { generateImages } from '../services/api/imageGeneration.api'
 //import "./PromptProcessor.css";
 
 interface GeneratorProps {

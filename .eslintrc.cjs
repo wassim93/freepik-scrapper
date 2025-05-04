@@ -22,7 +22,7 @@ module.exports = {
   },
   rules: {
     'no-extra-semi': ['error'],
-    'no-console': ['warn'],
+    //'no-console': ['warn'],
     '@typescript-eslint/no-explicit-any': 'off',
     'prefer-const': ['error'],
   },
@@ -45,6 +45,7 @@ module.exports = {
         'node/no-unpublished-import': 'off',
         'node/no-missing-import': 'off',
         'node/no-unsupported-features/es-syntax': 'off', // ← Optional: Disable if not needed
+        'no-restricted-imports': ['off', { patterns: ['*.ts'] }],
       },
     },
   ],

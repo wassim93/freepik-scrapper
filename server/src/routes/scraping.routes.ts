@@ -6,6 +6,6 @@ export const scrapingRoutes = (): express.Router => {
   const router = express.Router()
   const controller = new ScrapingController()
 
-  router.post('/scrape', controller.scrape)
+  router.post('/scrape', controller.scrape.bind(controller))
   return router
 }

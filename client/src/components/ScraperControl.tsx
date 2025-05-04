@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { scrapeAssets } from '../services/api'
+import { scrapeAssets } from '../services/api/scraping.api'
 //import "./ScraperControl.css";
 
 interface ScraperProps {
@@ -42,7 +42,7 @@ export const ScraperControl: React.FC<ScraperProps> = ({
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://www.freepik.com/user/..."
+            placeholder="https://www.freepik.com/author/..."
             required
           />
         </div>

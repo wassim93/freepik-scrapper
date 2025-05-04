@@ -1,12 +1,12 @@
 // src/utils/scraper.utils.ts
-import axios from 'axios'
 import { JSDOM } from 'jsdom'
 import { FreepikAsset } from '../types'
+import { axiosServer } from '../network/axiosServer'
 
 export class ScraperUtils {
   static async scrapeAuthorAssets(authorUrl: string): Promise<FreepikAsset[]> {
     try {
-      const response = await axios.get(authorUrl)
+      const response = await axiosServer.get(authorUrl)
       const dom = new JSDOM(response.data)
       const document = dom.window.document
 

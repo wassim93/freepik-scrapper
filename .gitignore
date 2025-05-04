@@ -14,7 +14,8 @@ package-lock.json
 
 # Server
 /server/node_modules/
-/server/.env
+/server/src/output/
+
 
 # Client
 /client/node_modules/
