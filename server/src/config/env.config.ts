@@ -1,6 +1,10 @@
 import dotenv from 'dotenv'
-import path from 'path'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
 
+// Get __dirname equivalent in ESM
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 // Load .env file
 dotenv.config({ path: path.resolve(__dirname, '../../../.env') })
 

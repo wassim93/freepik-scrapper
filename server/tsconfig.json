@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "strict": true,
+    "target": "ES2021",
+    "module": "ESNext",
+    "moduleResolution": "Node", // ← Required for ESM + Node.js
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./src",
-    "types": ["node"]
+    "types": ["node"],
+    "moduleDetection": "force" // ← Ensures proper ESM detection
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
