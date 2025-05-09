@@ -27,9 +27,10 @@ export class ScraperUtils {
         figures.forEach((figure) => {
           assets.push({
             name: figure.alt,
-            url: figure.src,
+            sourceUrlScrappedFrom: figure.src,
             pageIndexScrappedFrom: currentPage,
-            category: '',
+            metadata: null,
+            path: null,
           })
         })
       }

@@ -1,8 +1,15 @@
 export interface FreepikAsset {
   name: string
-  url: string
+  sourceUrlScrappedFrom: string
   pageIndexScrappedFrom: number
-  category: string
+  path?: string | null
+  metadata?: AssetMetaData | null
+}
+
+export interface AssetMetaData {
+  title?: string | null
+  description?: string | null
+  keywords?: string[] | null
 }
 
 export interface AIPrompt {

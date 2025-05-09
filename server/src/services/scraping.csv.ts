@@ -17,12 +17,24 @@ export class CSVService {
       if (!fs.existsSync(OUTPUT_DIR)) {
         fs.mkdirSync(OUTPUT_DIR, { recursive: true })
       }
-      const filename = `freepik_assets_${Date.now()}`
+      const timestamp = new Date().toISOString().split('.')[0].replace(/[:]/g, '-')
+      const filename = `freepik_assets_${timestamp}`
       const filePath = path.join(OUTPUT_DIR, `${filename}.csv`)
       const ws = fs.createWriteStream(filePath)
 
+      // Flatten the data for CSV
+      const flatAssets = assets.map((asset) => ({
+        name: asset.name,
+        title: asset.metadata?.title || '',
+        description: asset.metadata?.description || '',
+        keywords: asset.metadata?.keywords ? asset.metadata.keywords.join(', ') : '',
+        pageIndexScrappedFrom: asset.pageIndexScrappedFrom,
+        sourceUrlScrappedFrom: asset.sourceUrlScrappedFrom,
+        path: asset.path || '',
+      }))
+
       await new Promise((resolve, reject) => {
-        write(assets, { headers: true })
+        write(flatAssets, { headers: true })
           .on('error', (error) => {
             console.error('CSV write error:', error)
             reject(error)
