@@ -21,8 +21,9 @@ package-lock.json
 /client/node_modules/
 /client/dist/
 /client/build/
-
+/client/.env
 # Environment
+
 .env
 
 # Logs

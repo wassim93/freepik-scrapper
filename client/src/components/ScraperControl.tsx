@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { scrapeAssets } from '../services/api/scraping.api'
+import { GeneratedImage } from '../types'
 //import "./ScraperControl.css";
 
 interface ScraperProps {
-  onScrapeComplete: (filePath: string) => void
+  onScrapeComplete: (assets: GeneratedImage[]) => void
 }
 
 export const ScraperControl: React.FC<ScraperProps> = ({ onScrapeComplete }) => {
-  const [url, setUrl] = useState('')
+  const [author, setAuthor] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -17,9 +18,9 @@ export const ScraperControl: React.FC<ScraperProps> = ({ onScrapeComplete }) => 
     setError(null)
 
     try {
-      const result = await scrapeAssets({ authorUrl: url })
+      const result = await scrapeAssets({ authorName: author })
       if (result.success) {
-        onScrapeComplete(result.data.filePath)
+        onScrapeComplete(result.data.assets || [])
       }
     } catch (err: any) {
       setError(err.message || 'Scraping failed')
@@ -34,13 +35,13 @@ export const ScraperControl: React.FC<ScraperProps> = ({ onScrapeComplete }) => 
 
       <form onSubmit={handleSubmit} className="scraper-form">
         <div className="form-group">
-          <label htmlFor="author-url">Author URL:</label>
+          <label htmlFor="author-url">Author Name:</label>
           <input
             id="author-url"
             type="text"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://www.freepik.com/author/..."
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            placeholder="author name or @authorname"
             required
           />
         </div>

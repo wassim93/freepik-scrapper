@@ -24,10 +24,10 @@ export class CSVService {
 
       // Flatten the data for CSV
       const flatAssets = assets.map((asset) => ({
-        name: asset.name,
         title: asset.metadata?.title || '',
         description: asset.metadata?.description || '',
         keywords: asset.metadata?.keywords ? asset.metadata.keywords.join(', ') : '',
+        filename: asset.metadata?.fileName || '',
         pageIndexScrappedFrom: asset.pageIndexScrappedFrom,
         sourceUrlScrappedFrom: asset.sourceUrlScrappedFrom,
         path: asset.path || '',

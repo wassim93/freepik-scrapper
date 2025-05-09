@@ -2,7 +2,6 @@ import axios from 'axios'
 
 const axiosClient = axios.create({
   baseURL: process.env.SERVER_URL || 'http://localhost:3001', // Matches backend port
-  timeout: 30000,
   headers: { 'Content-Type': 'application/json' },
 })
 

@@ -25,23 +25,7 @@ export class ScrapingController {
       if (usedToday >= dailyQuota) {
         return res.status(429).json({ success: false, error: 'Daily AI image generation quota exceeded. Please try again tomorrow.' })
       }
-      const assets: FreepikAsset[] = [
-        {
-          name: '3d rendering of hexagonal texture background',
-          sourceUrlScrappedFrom: 'https://img.freepik.com/free-photo/3d-rendering-hexagonal-texture-background_23-2150796421.jpg?w=740,1,',
-          pageIndexScrappedFrom: 1,
-          metadata: null,
-          path: null,
-        },
-        {
-          name: 'Hand drawn mushroom   illustration',
-          sourceUrlScrappedFrom: 'https://img.freepik.com/free-vector/hand-drawn-mushroom-illustration_23-2151223366.jpg?w=740,1,',
-          pageIndexScrappedFrom: 1,
-          metadata: null,
-          path: null,
-        },
-      ]
-      //await this.service.scrapeData(req.body.authorUrl)
+      const assets = await this.service.scrapeData(req.body.authorName)
       if (assets.length === 0) {
         return res.status(200).json({ success: true, data: { assets: [] } })
       }
@@ -58,6 +42,8 @@ export class ScrapingController {
         if (!prompt) continue // Skip if no prompt is generated
 
         const filePath = await this.aiService.generateImage(prompt || '')
+        if (!filePath) continue // Skip if no image was generated (no filePath)
+
         const metadata = await this.aiService.generateStockMetadata(prompt || '')
         if (metadata) {
           asset.metadata = metadata
@@ -68,6 +54,7 @@ export class ScrapingController {
             await this.renameAsync(filePath, newFilePath)
             asset.path = newFilePath
             asset.name = metadata.title
+            asset.metadata.fileName = newFileName
           }
         }
         imageCount++
@@ -76,8 +63,9 @@ export class ScrapingController {
         await new Promise((resolve) => setTimeout(resolve, 6000)) // wait 6 seconds
       }
 
-      const csvFilePath = await this.csvService.writeAssetsToCSV(assets)
-      res.json({ success: true, data: { assets, csvFilePath } })
+      const validAssets = assets.filter((asset) => asset.path && asset.metadata && asset.metadata.fileName)
+      const csvFilePath = await this.csvService.writeAssetsToCSV(validAssets)
+      res.json({ success: true, data: { assets: validAssets, csvFilePath } })
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message })
     }

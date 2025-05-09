@@ -10,6 +10,7 @@ export interface AssetMetaData {
   title?: string | null
   description?: string | null
   keywords?: string[] | null
+  fileName?: string | null
 }
 
 export interface AIPrompt {
