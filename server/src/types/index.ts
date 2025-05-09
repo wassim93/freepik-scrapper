@@ -1,7 +1,7 @@
 export interface FreepikAsset {
   name: string
   url: string
-  author: string
+  pageIndexScrappedFrom: number
   category: string
 }
 

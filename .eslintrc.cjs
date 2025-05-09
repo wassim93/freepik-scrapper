@@ -25,6 +25,7 @@ module.exports = {
     //'no-console': ['warn'],
     '@typescript-eslint/no-explicit-any': 'off',
     'prefer-const': ['error'],
+    'max-len': 'off',
   },
   overrides: [
     {

@@ -1,18 +1,17 @@
 // src/services/scraping.service.ts
+import { FreepikAsset } from '../types'
 import { ScraperUtils } from '../utils/scraper.utils'
 import { CSVService } from './scraping.csv'
 
 export class ScrapingService {
   private csvService = new CSVService()
 
-  async scrapeAndSave(authorUrl: string): Promise<string> {
+  scrapeData = async (authorUrl: string): Promise<FreepikAsset[]> => {
     try {
-      const assets = await ScraperUtils.scrapeAuthorAssets(authorUrl)
-      const filename = `freepik_assets_${Date.now()}`
-      return await this.csvService.writeAssetsToCSV(assets, filename)
+      return await ScraperUtils.scrapeAuthorAssets(authorUrl, 1, 2)
     } catch (error) {
-      console.error('Scraping and saving failed:', error)
-      throw new Error('Failed to scrape and save Freepik assets.')
+      console.error('Scraping  failed:', error)
+      throw new Error('Failed to scrape Freepik assets.')
     }
   }
 }

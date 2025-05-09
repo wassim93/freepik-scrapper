@@ -8,20 +8,20 @@ const modulePath = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(modulePath)
 const OUTPUT_DIR = path.resolve(__dirname, '../output')
 export class CSVService {
-  async writeAssetsToCSV(
-    assets: FreepikAsset[],
-    filename: string
-  ): Promise<string> {
+  writeAssetsToCSV = async (assets: FreepikAsset[]): Promise<string> => {
     try {
       // Ensure output directory exists
+      if (assets.length === 0) {
+        throw new Error('No assets to write to CSV.')
+      }
       if (!fs.existsSync(OUTPUT_DIR)) {
         fs.mkdirSync(OUTPUT_DIR, { recursive: true })
       }
-
+      const filename = `freepik_assets_${Date.now()}`
       const filePath = path.join(OUTPUT_DIR, `${filename}.csv`)
       const ws = fs.createWriteStream(filePath)
 
-      return new Promise((resolve, reject) => {
+      await new Promise((resolve, reject) => {
         write(assets, { headers: true })
           .on('error', (error) => {
             console.error('CSV write error:', error)
@@ -33,6 +33,8 @@ export class CSVService {
           })
           .pipe(ws)
       })
+
+      return filePath
     } catch (error) {
       console.error('Failed to write assets to CSV:', error)
       throw new Error('Could not write CSV file.')

@@ -28,10 +28,7 @@ export const App: React.FC = () => {
         {csvPath && (
           <div className="step">
             <h2>2. Generate Images</h2>
-            <PromptProcessor
-              filePath={csvPath}
-              onGenerationComplete={handleGenerationComplete}
-            />
+            <PromptProcessor filePath={csvPath} onGenerationComplete={handleGenerationComplete} />
           </div>
         )}
 

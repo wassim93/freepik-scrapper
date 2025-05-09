@@ -1,38 +1,50 @@
 // src/utils/scraper.utils.ts
-import { JSDOM } from 'jsdom'
 import { FreepikAsset } from '../types'
-import { axiosServer } from '../network/axiosServer'
+import puppeteer from 'puppeteer'
 
 export class ScraperUtils {
-  static async scrapeAuthorAssets(authorUrl: string): Promise<FreepikAsset[]> {
+  static async scrapeAuthorAssets(authorUrl: string, startIndex: number, endIndex: number): Promise<FreepikAsset[]> {
     try {
-      const response = await axiosServer.get(authorUrl)
-      const dom = new JSDOM(response.data)
-      const document = dom.window.document
+      const browser = await puppeteer.launch({
+        headless: false,
+      })
+      const page = await browser.newPage()
 
       const assets: FreepikAsset[] = []
-      const itemElements = document.querySelectorAll(
-        '.search-result__items .item'
-      )
 
-      itemElements.forEach((item) => {
-        const nameElement = item.querySelector('.item__name')
-        const linkElement = item.querySelector('a')
-
-        if (nameElement && linkElement) {
-          assets.push({
-            name: nameElement.textContent?.trim() || '',
-            url: `https://www.freepik.com${linkElement.getAttribute('href')}`,
-            author: authorUrl.split('/').pop() || '',
-            category:
-              item.querySelector('.item__category')?.textContent?.trim() || '',
+      for (let currentPage = startIndex; currentPage <= endIndex; currentPage++) {
+        await page.goto(`${authorUrl}/${currentPage}`, { waitUntil: 'networkidle2' })
+        const figures = await page.$$eval('figure[data-cy="resource-thumbnail"]', (elements) => {
+          // Return the list of elements to process outside of the $$eval call
+          return elements.map((figure) => {
+            const img = figure.querySelector('img')
+            const alt = img?.getAttribute('alt') || ''
+            const src = img?.getAttribute('src') || ''
+            return { alt, src }
           })
-        }
-      })
+        })
+
+        figures.forEach((figure) => {
+          assets.push({
+            name: figure.alt,
+            url: figure.src,
+            pageIndexScrappedFrom: currentPage,
+            category: '',
+          })
+        })
+      }
+
+      console.log('Assets scraped:', assets)
+
+      await browser.close()
 
       return assets
     } catch (error) {
-      throw new Error(`Scraping failed: ${error.message}`)
+      if (error instanceof Error) {
+        throw new Error(`Scraping failed: ${error.message}`)
+      } else {
+        throw new Error('Scraping failed: An unknown error occurred')
+      }
     }
   }
 }

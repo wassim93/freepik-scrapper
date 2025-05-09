@@ -2,16 +2,17 @@
   "compilerOptions": {
     "target": "ES2021",
     "module": "ESNext",
-    "sourceMap": true, // ← Required for debugging
-    "moduleResolution": "Node", // ← Required for ESM + Node.js
+    "sourceMap": true,
+    "moduleResolution": "Node",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "./dist",
     "rootDir": "./src",
     "types": ["node"],
-    "moduleDetection": "force", // ← Ensures proper ESM detection
-    "allowImportingTsExtensions": true, // ← Add this line
-    "noEmit": true // ← Required for 'allowImportingTsExtensions'
+    "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
+    "noEmit": true, // Change this to false if you want to emit compiled JavaScript
+    "strict": true // Optional, but recommended for better type safety
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]

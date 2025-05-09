@@ -7,13 +7,8 @@ interface GeneratorProps {
   onGenerationComplete: (images: any[]) => void
 }
 
-export const PromptProcessor: React.FC<GeneratorProps> = ({
-  filePath,
-  onGenerationComplete,
-}) => {
-  const [promptTemplate, setPromptTemplate] = useState(
-    'Create a modern design based on {assetName}'
-  )
+export const PromptProcessor: React.FC<GeneratorProps> = ({ filePath, onGenerationComplete }) => {
+  const [promptTemplate, setPromptTemplate] = useState('Create a modern design based on {assetName}')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -41,15 +36,8 @@ export const PromptProcessor: React.FC<GeneratorProps> = ({
       <form onSubmit={handleSubmit} className="generator-form">
         <div className="form-group">
           <label htmlFor="prompt">Prompt Template:</label>
-          <textarea
-            id="prompt"
-            value={promptTemplate}
-            onChange={(e) => setPromptTemplate(e.target.value)}
-            rows={4}
-          />
-          <small className="hint">
-            Use assetName as placeholder for asset name
-          </small>
+          <textarea id="prompt" value={promptTemplate} onChange={(e) => setPromptTemplate(e.target.value)} rows={4} />
+          <small className="hint">Use assetName as placeholder for asset name</small>
         </div>
 
         <button type="submit" disabled={loading} className="submit-button">

@@ -6,9 +6,7 @@ interface ScraperProps {
   onScrapeComplete: (filePath: string) => void
 }
 
-export const ScraperControl: React.FC<ScraperProps> = ({
-  onScrapeComplete,
-}) => {
+export const ScraperControl: React.FC<ScraperProps> = ({ onScrapeComplete }) => {
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
