@@ -1,7 +1,7 @@
 export interface FreepikAsset {
   name: string
-  sourceUrlScrappedFrom: string
-  pageIndexScrappedFrom: number
+  sourceUrlScrappedFrom?: string
+  pageIndexScrappedFrom?: number
   path?: string | null
   metadata?: AssetMetaData | null
 }

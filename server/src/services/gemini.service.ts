@@ -7,7 +7,7 @@ import { AssetMetaData } from '../types'
 
 const modulePath = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(modulePath)
-const OUTPUT_DIR = path.resolve(__dirname, '../output')
+const OUTPUT_DIR = path.resolve(__dirname, '../output/assets')
 export class GeminiService {
   geminiAi = new GoogleGenAI({ apiKey: ENV.AI_API_KEY })
 
@@ -74,7 +74,7 @@ export class GeminiService {
             fs.mkdirSync(OUTPUT_DIR, { recursive: true })
           }
           // Generate a unique filename
-          const filename = `gemini-image-${Date.now()}.png`
+          const filename = `gemini-image-${Date.now()}.jpg`
           const filePath = path.join(OUTPUT_DIR, filename)
           // Write the image file
           const buffer = Buffer.from(imageData, 'base64')
@@ -108,8 +108,8 @@ export class GeminiService {
       Based on the following detailed prompt, produce a JSON object with the following keys:
 
       1) title: a concise, SEO-friendly title (maximum 70 characters),
-      2) description: a factual, objective 2–3 sentence description of the image content,
-      3) keywords: an array of up to 50 relevant, comma-separated keywords suitable for stock search.
+      2) description: a factual, objective 2–3 sentence description of the image content. Do NOT mention usage rights, licensing, commercial use, or watermarks (maximum 200 characters).
+      3) keywords: an array of up to 50 relevant, comma-separated keywords suitable for stock search. Avoid terms related to licensing such as "no watermark", "free to use", or "commercial use".
 
       Prompt:
       "${enhancedPrompt}"`
@@ -129,10 +129,14 @@ export class GeminiService {
       const jsonStr = text.slice(start, end)
 
       const metadata = JSON.parse(jsonStr)
+      const disallowedTerms = ['commercial use', 'no watermark', 'free to use', 'royalty free', 'license']
+      const keywords: string[] = (metadata.keywords || []).filter((kw: string) => !disallowedTerms.some((term) => kw.toLowerCase().includes(term)))
+      const description: string = metadata.description?.replace(new RegExp(disallowedTerms.join('|'), 'gi'), '').trim()
+
       return {
-        title: metadata.title,
-        description: metadata.description,
-        keywords: Array.isArray(metadata.keywords) ? metadata.keywords : [],
+        title: metadata.title?.trim(),
+        description,
+        keywords,
       }
     } catch (error) {
       console.error('Error generating stock metadata:', error)

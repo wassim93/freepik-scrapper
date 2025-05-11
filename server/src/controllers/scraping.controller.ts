@@ -70,4 +70,23 @@ export class ScrapingController {
       res.status(500).json({ success: false, error: error.message })
     }
   }
+
+  async cleanupCSV(req: Request, res: Response<ApiResponse<{ assets?: FreepikAsset[] }>>) {
+    try {
+      const csvFileName = 'freepik_assets_2025-05-09T20-53-14 - Copy.csv'
+      const assets = await this.csvService.cleanupAssetsFromCSV(csvFileName)
+      res.json({ success: true, data: { assets } })
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message })
+    }
+  }
+
+  async getAssets(req: Request, res: Response<ApiResponse<{ assets?: FreepikAsset[] }>>) {
+    try {
+      const assets = await this.service.getLocalAssets()
+      res.json({ success: true, data: { assets } })
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message })
+    }
+  }
 }

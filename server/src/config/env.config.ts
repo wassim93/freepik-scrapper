@@ -12,5 +12,6 @@ export const ENV = {
   AI_DAILY_QUOTA: parseInt(process.env.GEMINI_DAILY_QUOTA || '10'),
   SCRAPPING_START_PAGE: parseInt(process.env.SCRAPING_START_PAGE || '1'),
   SCRAPPING_END_PAGE: parseInt(process.env.SCRAPING_END_PAGE || '1'),
+  ASSETS_PATH: process.env.ASSETS_PATH || '',
   NODE_ENV: process.env.NODE_ENV || 'development',
 }

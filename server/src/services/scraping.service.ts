@@ -12,4 +12,13 @@ export class ScrapingService {
       throw new Error('Failed to scrape Freepik assets.')
     }
   }
+
+  getLocalAssets = async (): Promise<FreepikAsset[]> => {
+    try {
+      return await ScraperUtils.getLocalAssets()
+    } catch (error) {
+      console.error('Getting local assets failed:', error)
+      throw new Error('Failed to get local assets.')
+    }
+  }
 }

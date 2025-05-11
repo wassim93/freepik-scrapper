@@ -5,3 +5,8 @@ export const scrapeAssets = async (data: { authorName: string }) => {
   const response = await axiosClient.post('/api/scraping/scrape', data)
   return response.data
 }
+
+export const getAssets = async () => {
+  const response = await axiosClient.get('/api/scraping/getAssets')
+  return response.data
+}

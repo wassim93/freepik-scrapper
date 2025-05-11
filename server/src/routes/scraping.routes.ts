@@ -7,5 +7,8 @@ export const scrapingRoutes = (): express.Router => {
   const controller = new ScrapingController()
 
   router.post('/scrape', controller.scrape.bind(controller))
+  router.get('/getAssets', controller.getAssets.bind(controller))
+  router.get('/read-csv', controller.cleanupCSV.bind(controller))
+
   return router
 }
