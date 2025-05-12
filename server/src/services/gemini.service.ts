@@ -8,8 +8,81 @@ import { AssetMetaData } from '../types'
 const modulePath = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(modulePath)
 const OUTPUT_DIR = path.resolve(__dirname, '../output/assets')
+
+const styles = [
+  'vaporwave style',
+  'cyberpunk aesthetic',
+  'surrealism',
+  'retro-futurism',
+  'hyperrealism',
+  'dreamcore',
+  'anime illustration',
+  'steampunk theme',
+  'Ukiyo-e',
+  'digital painting',
+  'concept art',
+  'fantasy art',
+  'minimalist design',
+  'watercolor sketch',
+  'baroque art', // Added new style
+  'geometric abstraction', // Added new style
+  'impressionism', // Added new style
+  'neon noir', // Added new style
+  'flat design', // Added new style
+]
+
+const lighting = [
+  'golden hour lighting',
+  'soft ambient glow',
+  'dramatic shadows',
+  'neon backlight',
+  'natural daylight',
+  'overcast mood',
+  'spotlight focus',
+  'sunset tones',
+  'moonlit ambiance', // Added new lighting
+  'soft glow from within', // Added new lighting
+  'hazy and ethereal', // Added new lighting
+  'high contrast with sharp shadows', // Added new lighting
+]
+
+const perspectives = [
+  'top-down view',
+  'wide angle shot',
+  'macro close-up',
+  'cinematic composition',
+  'isometric view',
+  'dreamlike atmosphere',
+  'vivid background details',
+  'symmetrical framing', // Added new perspective
+  'low-angle shot', // Added new perspective
+  'bird’s-eye view', // Added new perspective
+  'abstract distorted angle', // Added new perspective
+  'fisheye perspective', // Added new perspective
+  'horizon line focus', // Added new perspective
+]
+
+// Color palette options
+const colorPalettes = [
+  'pastel tones',
+  'neon red & teal',
+  'sepia tones',
+  'black & gold',
+  'vibrant rainbow hues',
+  'earthy neutrals',
+  'icy blue and silver',
+  'muted pinks & blues',
+  'soft beige and brown',
+  'bold contrasting hues',
+  'warm sunset colors',
+  'deep ocean blues & greens',
+  'electric purple and lime',
+  'golden amber & ruby red',
+  'monochrome grayscale with accents',
+]
 export class GeminiService {
   geminiAi = new GoogleGenAI({ apiKey: ENV.AI_API_KEY })
+  getRandomElement = (arr: string[]) => arr[Math.floor(Math.random() * arr.length)]
 
   /**
    * Generates an enhanced prompt from imageName using Gemini
@@ -18,9 +91,30 @@ export class GeminiService {
    */
   generateEnhancedPrompt = async (imageName: string): Promise<string | null> => {
     try {
+      const randomStyle = this.getRandomElement(styles)
+      const randomLighting = this.getRandomElement(lighting)
+      const randomPerspective = this.getRandomElement(perspectives)
+      const randomPalette = this.getRandomElement(colorPalettes)
+      const composedPrompt = `You are a professional AI image prompt engineer.
+      Given the following image idea: "${imageName}", write a UNIQUE and imaginative prompt that:
+      
+      - Includes vivid, immersive visual storytelling with poetic nuance
+      - Integrates original, unexpected abstract or symbolic details
+      - Specifies style: ${randomStyle}
+      - Mentions lighting: ${randomLighting}
+      - Adds color palette ideas: ${randomPalette}
+      - Suggests angle or composition: ${randomPerspective}
+      - Specifies that the image should be created at 300 DPI for high-resolution output
+      - Avoids repetition or generic phrases
+      - Does NOT include watermarks, branding, text, or logos
+      
+      The result must be optimized to produce a stunning, professional, and visually captivating image suitable for a design marketplace.
+      
+      Respond with only the prompt to be used with an image generation model.`
+
       const response = await this.geminiAi.models.generateContent({
         model: ENV.AI_MODEL,
-        contents: `Create a detailed and enhanced AI prompt to generate a high-resolution (at least 300 DPI) image of "${imageName}". The image should be suitable for use as a digital product or digital asset (such as printable artwork, design elements, clipart, or commercial-use graphics). Focus on creating a clean, professional, and visually appealing result that is free of watermarks, logos, or branding. Include details about the subject, recommended style or aesthetic, relevant keywords, and visual composition tips to ensure the image is ready for digital distribution or sale.`,
+        contents: composedPrompt,
       })
 
       if (

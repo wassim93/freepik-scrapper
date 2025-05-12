@@ -23,7 +23,7 @@ export class ScrapingController {
       const usedToday = await this.quotaService.getTodayCount()
       const dailyQuota = ENV.AI_DAILY_QUOTA
       if (usedToday >= dailyQuota) {
-        return res.status(429).json({ success: false, error: 'Daily AI image generation quota exceeded. Please try again tomorrow.' })
+        return res.status(429).json({ success: false, message: 'Daily AI image generation quota exceeded. Please try again tomorrow.' })
       }
       const assets = await this.service.scrapeData(req.body.authorName)
       if (assets.length === 0) {
@@ -67,7 +67,7 @@ export class ScrapingController {
       const csvFilePath = await this.csvService.writeAssetsToCSV(validAssets)
       res.json({ success: true, data: { assets: validAssets, csvFilePath } })
     } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message })
+      res.status(500).json({ success: false, message: error.message })
     }
   }
 
@@ -77,7 +77,7 @@ export class ScrapingController {
       const assets = await this.csvService.cleanupAssetsFromCSV(csvFileName)
       res.json({ success: true, data: { assets } })
     } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message })
+      res.status(500).json({ success: false, message: error.message })
     }
   }
 
@@ -86,7 +86,7 @@ export class ScrapingController {
       const assets = await this.service.getLocalAssets()
       res.json({ success: true, data: { assets } })
     } catch (error: any) {
-      res.status(500).json({ success: false, error: error.message })
+      res.status(500).json({ success: false, message: error.message })
     }
   }
 }

@@ -13,7 +13,7 @@ axiosClient.interceptors.request.use((config) => {
 axiosClient.interceptors.response.use(
   (res) => res,
   (err) => {
-    console.error('API error:', err.response || err)
+    console.error('API error:', err.response.data || err)
     return Promise.reject(err)
   }
 )

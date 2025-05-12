@@ -25,7 +25,7 @@ export const App: React.FC = () => {
     }
 
     fetchAssets()
-  }, [])
+  }, [generatedImages.length])
 
   return (
     <Layout>

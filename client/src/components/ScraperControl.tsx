@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { scrapeAssets } from '../services/api/scraping.api'
 import { GeneratedImage } from '../types'
+import axios from 'axios'
 //import "./ScraperControl.css";
 
 interface ScraperProps {
@@ -19,11 +20,17 @@ export const ScraperControl: React.FC<ScraperProps> = ({ onScrapeComplete }) => 
 
     try {
       const result = await scrapeAssets({ authorName: author })
+      console.log('Scrape result:', result)
       if (result.success) {
         onScrapeComplete(result.data.assets || [])
       }
     } catch (err: any) {
-      setError(err.message || 'Scraping failed')
+      if (axios.isAxiosError(err)) {
+        const errorMessage = err.response?.data?.message || 'Scraping failed'
+        setError(errorMessage)
+      } else {
+        setError('An unexpected error occurred')
+      }
     } finally {
       setLoading(false)
     }
