@@ -44,7 +44,7 @@ export const App: React.FC = () => {
         {recentGeneratedImage.length > 0 && (
           <div className="step">
             <h2>Recent Generated</h2>
-            <ImageDisplay images={recentGeneratedImage} assetsPath="/" />
+            <ImageDisplay images={recentGeneratedImage} assetsPath="/assets/" />
           </div>
         )}
       </div>

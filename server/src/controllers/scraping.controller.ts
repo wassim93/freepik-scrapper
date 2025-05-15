@@ -38,7 +38,7 @@ export class ScrapingController {
           console.warn('Quota limit reached during processing; stopping early.')
           break
         }
-        const prompt = await this.aiService.generateEnhancedPrompt(asset.name)
+        const prompt = await this.aiService.generateEnhancedPrompt(asset.name, true)
         if (!prompt) continue // Skip if no prompt is generated
 
         const filePath = await this.aiService.generateImage(prompt || '')
