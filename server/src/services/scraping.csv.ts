@@ -3,6 +3,7 @@ import { FreepikAsset } from '../types'
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { ENV } from '../config/env.config'
 
 const modulePath = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(modulePath)
@@ -62,9 +63,13 @@ export class CSVService {
 
     await new Promise<void>((resolve, reject) =>
       parseFile(csvFilePath, { headers: true })
-        .on('error', reject)
+        .on('error', (err) => {
+          console.error(`❌ Fast CSV parsing error in file: ${csvFileName}`, err)
+          reject
+        })
         .on('data', (row) => {
-          const assetPath = path.join(OUTPUT_DIR, row.filename)
+          console.log('******', row)
+          const assetPath = path.join(path.join(OUTPUT_DIR, ENV.ASSETS_PATH), row.filename)
           if (row.filename && fs.existsSync(assetPath)) {
             const asset: FreepikAsset = {
               name: row.title,
@@ -79,6 +84,8 @@ export class CSVService {
               path: assetPath,
             }
             assets.push(asset)
+          } else {
+            console.log('file not found for row :', row)
           }
         })
         .on('end', () => {

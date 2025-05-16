@@ -73,7 +73,7 @@ export class ScrapingController {
 
   async cleanupCSV(req: Request, res: Response<ApiResponse<{ assets?: FreepikAsset[] }>>) {
     try {
-      const csvFileName = 'freepik_assets_2025-05-09T20-53-14 - Copy.csv'
+      const csvFileName = ENV.CSV_FILENAME_TO_CLEANUP
       const assets = await this.csvService.cleanupAssetsFromCSV(csvFileName)
       res.json({ success: true, data: { assets } })
     } catch (error: any) {

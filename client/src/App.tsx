@@ -5,6 +5,8 @@ import './styles/App.css'
 import { Layout } from './components/Layout'
 import { GeneratedImage } from './types'
 import { getAssets } from './services/api/scraping.api'
+import axios from 'axios'
+import { cleanupCSV } from './services/api/csv.api'
 
 export const App: React.FC = () => {
   const [generatedImages, setGeneratedImages] = useState<GeneratedImage[]>([])
@@ -27,9 +29,29 @@ export const App: React.FC = () => {
     fetchAssets()
   }, [generatedImages.length])
 
+  const cleanup = async () => {
+    try {
+      const result = await cleanupCSV()
+      console.log('Scrape result:', result)
+      if (result.success) {
+        console.log('success')
+      }
+    } catch (err: any) {
+      if (axios.isAxiosError(err)) {
+        const errorMessage = err.response?.data?.message || 'cleanup failed'
+        console.log(errorMessage)
+      } else {
+        console.log('error here', err)
+      }
+    }
+  }
+
   return (
     <Layout>
       <div className="steps-container">
+        <button className="submit-button" onClick={cleanup}>
+          cleanup csv
+        </button>
         <div className="step">
           <h2>1. Scrape Assets</h2>
           <ScraperControl onScrapeComplete={handleScrapeComplete} />

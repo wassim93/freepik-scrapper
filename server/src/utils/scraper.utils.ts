@@ -5,10 +5,11 @@ import { FreepikAsset } from '../types'
 import puppeteer from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 import { fileURLToPath } from 'url'
+import { ENV } from '../config/env.config'
 
 const modulePath = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(modulePath)
-const OUTPUT_DIR = path.resolve(__dirname, '../output')
+const OUTPUT_DIR = path.resolve(__dirname, `../output${ENV.ASSETS_PATH}`)
 const IMAGE_EXTENSIONS = /\.(jpe?g|png)$/i
 
 puppeteer.use(StealthPlugin())
@@ -34,7 +35,7 @@ export class ScraperUtils {
       const assets: FreepikAsset[] = []
 
       for (let currentPage = startIndex; currentPage <= endIndex; currentPage++) {
-        const searchUrl = `https://www.freepik.com/search?query=${encodeURIComponent(authorName)}&page=${currentPage}&last_filter=page&last_value=${currentPage}&sort=relevance`
+        const searchUrl = `https://www.freepik.com/search?query=${encodeURIComponent(authorName)}&page=${currentPage}&last_filter=page&last_value=${currentPage}&sort=recent&type=illustration`
 
         await page.goto(searchUrl, { waitUntil: 'networkidle0', timeout: 0 })
         const figures = await page.$$eval('figure[data-cy="resource-thumbnail"]', (elements) => {
@@ -70,23 +71,20 @@ export class ScraperUtils {
   }
 
   static async getLocalAssets(): Promise<FreepikAsset[]> {
-    const assetsPath = process.env.ASSETS_PATH || ''
-    const folderPath = path.join(OUTPUT_DIR, assetsPath)
-
     // Ensure the folder exists and is a directory
-    if (!fs.existsSync(folderPath) || !fs.statSync(folderPath).isDirectory()) {
-      throw new Error(`Assets folder not found or not a directory: ${folderPath}`)
+    if (!fs.existsSync(OUTPUT_DIR) || !fs.statSync(OUTPUT_DIR).isDirectory()) {
+      throw new Error(`Assets folder not found or not a directory: ${OUTPUT_DIR}`)
     }
 
     // Read directory entries
-    const entries = await this.readdirAsync(folderPath)
+    const entries = await this.readdirAsync(OUTPUT_DIR)
 
     // Filter image files and map to FreepikAsset
     const assets: FreepikAsset[] = entries
       .filter((entry) => IMAGE_EXTENSIONS.test(entry.name))
       .map((entry) => {
         const fileName = entry.name
-        const assetPath = path.join(folderPath, fileName)
+        const assetPath = path.join(OUTPUT_DIR, fileName)
         const name = path.parse(fileName).name
 
         return {

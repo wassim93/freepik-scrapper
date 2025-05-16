@@ -14,4 +14,5 @@ export const ENV = {
   SCRAPPING_END_PAGE: parseInt(process.env.SCRAPING_END_PAGE || '1'),
   ASSETS_PATH: process.env.ASSETS_PATH || '',
   NODE_ENV: process.env.NODE_ENV || 'development',
+  CSV_FILENAME_TO_CLEANUP: process.env.CSV_FILENAME_TO_CLEANUP || '',
 }
