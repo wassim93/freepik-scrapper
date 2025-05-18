@@ -35,7 +35,7 @@ export class ScraperUtils {
       const assets: FreepikAsset[] = []
 
       for (let currentPage = startIndex; currentPage <= endIndex; currentPage++) {
-        const searchUrl = `https://www.freepik.com/search?query=${encodeURIComponent(authorName)}&page=${currentPage}&last_filter=page&last_value=${currentPage}&sort=recent&type=illustration`
+        const searchUrl = `https://www.freepik.com/search?query=${encodeURIComponent(authorName)}&page=${currentPage}&last_filter=page&last_value=${currentPage}&type=illustration&premium=1`
 
         await page.goto(searchUrl, { waitUntil: 'networkidle0', timeout: 0 })
         const figures = await page.$$eval('figure[data-cy="resource-thumbnail"]', (elements) => {

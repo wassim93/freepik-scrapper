@@ -1,6 +1,6 @@
 // src/controllers/scraping.controller.ts
 import { Request, Response } from 'express'
-import { ApiResponse, FreepikAsset } from '../types'
+import { ApiResponse, CsvFilesPath, FreepikAsset } from '../types'
 import { ScrapingService } from '../services/scraping.service'
 import { CSVService } from '../services/scraping.csv'
 import { GeminiService } from '../services/gemini.service'
@@ -18,7 +18,7 @@ export class ScrapingController {
 
   renameAsync = promisify(fs.rename)
 
-  async scrape(req: Request, res: Response<ApiResponse<{ assets?: FreepikAsset[]; csvFilePath?: string }>>) {
+  async scrape(req: Request, res: Response<ApiResponse<{ assets?: FreepikAsset[]; csvFilesPath?: CsvFilesPath }>>) {
     try {
       const usedToday = await this.quotaService.getTodayCount()
       const dailyQuota = ENV.AI_DAILY_QUOTA
@@ -38,7 +38,7 @@ export class ScrapingController {
           console.warn('Quota limit reached during processing; stopping early.')
           break
         }
-        const prompt = await this.aiService.generateEnhancedPrompt(asset.name, true)
+        const prompt = await this.aiService.generateEnhancedPrompt(asset.name, ENV.GENERATE_MINIMALIST_ASSETS)
         if (!prompt) continue // Skip if no prompt is generated
 
         const filePath = await this.aiService.generateImage(prompt || '')
@@ -64,8 +64,22 @@ export class ScrapingController {
       }
 
       const validAssets = assets.filter((asset) => asset.path && asset.metadata && asset.metadata.fileName)
-      const csvFilePath = await this.csvService.writeAssetsToCSV(validAssets)
-      res.json({ success: true, data: { assets: validAssets, csvFilePath } })
+      // const validAssets: FreepikAsset[] = [
+      //   {
+      //     name: 'Sample Asset',
+      //     sourceUrlScrappedFrom: 'https://example.com',
+      //     pageIndexScrappedFrom: 1,
+      //     path: 'path/to/asset.jpg',
+      //     metadata: {
+      //       title: 'Sample Asset',
+      //       description: 'Sample description',
+      //       keywords: ['keyword1', 'keyword2'],
+      //       fileName: 'Minimalist_Scooter_Delivery_Concept_Art.png',
+      //     },
+      //   },
+      // ]
+      const csvFilesPath = await this.csvService.writeAssetsToCSV(validAssets)
+      res.json({ success: true, data: { assets: validAssets, csvFilesPath } })
     } catch (error: any) {
       res.status(500).json({ success: false, message: error.message })
     }

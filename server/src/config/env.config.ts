@@ -15,4 +15,5 @@ export const ENV = {
   ASSETS_PATH: process.env.ASSETS_PATH || '',
   NODE_ENV: process.env.NODE_ENV || 'development',
   CSV_FILENAME_TO_CLEANUP: process.env.CSV_FILENAME_TO_CLEANUP || '',
+  GENERATE_MINIMALIST_ASSETS: process.env.GENERATE_MINIMALIST_ASSETS === 'true' ? true : false || false,
 }

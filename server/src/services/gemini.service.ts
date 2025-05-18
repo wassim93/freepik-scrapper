@@ -147,28 +147,33 @@ export class GeminiService {
       let extraNotes = `- The overall mood should be ${mood}.`
       if (applyFlatVectorFlavor) {
         extraNotes += `
-- The illustration should follow a flat vector aesthetic
-- Use clean 2D shapes with subtle pastel or limited color palettes
-- Favor friendly and approachable forms with minimal detail
-- Inspired by modern onboarding illustrations and minimalist UI graphics`
+      - The illustration should follow a flat vector aesthetic
+      - Use clean 2D shapes with subtle pastel or limited color palettes
+      - Favor friendly and approachable forms with minimal detail
+      - Inspired by modern onboarding illustrations and minimalist UI graphics`
       }
 
+      // For non-minimal mode, explicitly avoid "highly detailed" or complex details to reduce errors
+      const detailInstruction = minimalMode
+        ? `- Emphasizes simplicity, clean lines, and minimalism`
+        : `- Avoid highly detailed or overly complex descriptions to prevent image generation errors`
+
       const composedPrompt = `You are a professional AI image prompt engineer.
-Given the following image idea: "${imageName}", write a UNIQUE and creative image generation prompt that:
+      Given the following image idea: "${imageName}", write a UNIQUE and creative image generation prompt that:
 
-- Emphasizes simplicity, clean lines, and minimalism
-- Uses style: ${style}
-- Specifies lighting: ${lightingValue}
-- Uses a color palette: ${palette}
-- Mentions composition: ${perspective}
-- Encourages negative space and avoids background clutter
-- Avoids words like 'realistic', 'detailed', or 'textured'
-- Uses simple adjectives like "clean", "basic", "minimal"
-- Does NOT include text, branding, logos, or watermarks
-- Must be high-resolution (300 DPI)
-${extraNotes}
+      ${detailInstruction}
+      - Uses style: ${style}
+      - Specifies lighting: ${lightingValue}
+      - Uses a color palette: ${palette}
+      - Mentions composition: ${perspective}
+      - Encourages negative space and avoids background clutter
+      - Avoids words like 'realistic', 'detailed', or 'textured'
+      - Uses simple adjectives like "clean", "basic", "minimal"
+      - Does NOT include text, branding, logos, or watermarks
+      - Must be high-resolution (300 DPI)
+      ${extraNotes}
 
-Only respond with the final prompt to use in an AI image generation model.`
+      Only respond with the final prompt to use in an AI image generation model.`
 
       const response = await this.geminiAi.models.generateContent({
         model: ENV.AI_MODEL,

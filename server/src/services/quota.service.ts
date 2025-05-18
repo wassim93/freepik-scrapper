@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url'
 
 const modulePath = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(modulePath)
-const QUOTA_FILE = path.resolve(__dirname, '../output/daily_quota.json')
+const QUOTA_FILE = path.resolve(__dirname, '../config/daily_quota.json')
 
 export class QuotaService {
   private quota = { date: '', imageGenerationCount: 0 }
