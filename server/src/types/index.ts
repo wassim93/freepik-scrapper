@@ -14,19 +14,19 @@ export interface AssetMetaData {
 }
 
 export interface AssetCsvRow {
-  title?: string | null
-  description?: string | null
-  keywords?: string | null
-  fileName?: string | null
-  sourceUrlScrappedFrom?: string
-  pageIndexScrappedFrom?: number
-  path?: string | null
+  title: string
+  description: string
+  keywords: string
+  filename: string
+  sourceUrlScrappedFrom: string
+  pageIndexScrappedFrom: number
+  path: string
 }
 
 export interface AdobeStockType {
-  Filename?: string | null
-  Title?: string | null
-  Keywords?: string | null
+  Filename: string
+  Title: string
+  Keywords: string
   Category?: string | null
   Releases?: string | null
 }

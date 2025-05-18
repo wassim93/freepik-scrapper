@@ -1,4 +1,4 @@
-import { format, parseFile, writeToPath } from 'fast-csv'
+import { format, parseFile } from 'fast-csv'
 import { AdobeStockType, CsvFilesPath, AssetCsvRow, FreepikAsset } from '../types'
 import fs from 'fs'
 import path from 'path'
@@ -41,7 +41,7 @@ export class CSVService {
         })
         .on('data', (row) => rows.push(row))
         .on('end', () => {
-          console.log(`Parsed and filtered CSV: ${csvFileName}, valid rows: ${rows.length}`)
+          console.log(`Parsed CSV: ${csvFileName}, valid rows: ${rows.length}`)
           resolve(rows)
         })
     })
@@ -68,8 +68,8 @@ export class CSVService {
         description: asset.metadata?.description || '',
         keywords: asset.metadata?.keywords?.join(', ') || '',
         filename: asset.metadata?.fileName || '',
-        pageIndexScrappedFrom: asset.pageIndexScrappedFrom,
-        sourceUrlScrappedFrom: asset.sourceUrlScrappedFrom,
+        pageIndexScrappedFrom: asset.pageIndexScrappedFrom ?? 0,
+        sourceUrlScrappedFrom: asset.sourceUrlScrappedFrom || '',
         path: asset.path || '',
       }))
 
@@ -110,69 +110,87 @@ export class CSVService {
     }
   }
 
-  cleanupAssetsFromCSV = async (csvFileName: string): Promise<FreepikAsset[]> => {
-    const csvFilePath = path.join(OUTPUT_DIR, csvFileName)
+  cleanupAssetsFromCSV = async (csvAssetFileName: string): Promise<FreepikAsset[]> => {
+    if (!csvAssetFileName) {
+      throw new Error('CSV file name is required.')
+    }
+    const csvAssetFilePath = path.join(OUTPUT_DIR, csvAssetFileName)
+    if (!fs.existsSync(csvAssetFilePath)) {
+      throw new Error(`CSV file not found at path: ${csvAssetFilePath}`)
+    }
+    const rows = await this.readCsv<AssetCsvRow>(csvAssetFilePath, csvAssetFileName)
 
-    if (!fs.existsSync(csvFilePath)) {
-      throw new Error(`CSV file not found at path: ${csvFilePath}`)
+    const validAssets: FreepikAsset[] = []
+
+    for (const row of rows) {
+      const assetPath = path.join(path.join(OUTPUT_DIR, ENV.ASSETS_PATH), row.filename)
+      if (fs.existsSync(assetPath)) {
+        const asset: FreepikAsset = {
+          name: row.title,
+          sourceUrlScrappedFrom: row.sourceUrlScrappedFrom,
+          pageIndexScrappedFrom: parseInt(String(row.pageIndexScrappedFrom), 10),
+          metadata: {
+            title: row.title,
+            description: row.description,
+            keywords: (row.keywords ?? '').split(', ').map((keyword: string) => keyword.trim()),
+            fileName: row.filename,
+          },
+          path: assetPath,
+        }
+        validAssets.push(asset)
+      } else {
+        console.log('file not found for row:', row)
+      }
     }
 
-    const assets: FreepikAsset[] = []
+    const outputAssetsRows = validAssets.map((asset) => ({
+      title: asset.metadata?.title || '',
+      description: asset.metadata?.description || '',
+      keywords: asset.metadata?.keywords?.join(', ') || '',
+      filename: asset.metadata?.fileName || '',
+      pageIndexScrappedFrom: asset.pageIndexScrappedFrom,
+      sourceUrlScrappedFrom: asset.sourceUrlScrappedFrom,
+      path: asset.path || '',
+    }))
 
-    await new Promise<void>((resolve, reject) =>
-      parseFile(csvFilePath, { headers: true })
-        .on('error', (err) => {
-          console.error(`❌ Fast CSV parsing error in file: ${csvFileName}`, err)
-          reject
-        })
-        .on('data', (row) => {
-          //console.log('******', row)
-          const assetPath = path.join(path.join(OUTPUT_DIR, ENV.ASSETS_PATH), row.filename)
-          if (row.filename && fs.existsSync(assetPath)) {
-            const asset: FreepikAsset = {
-              name: row.title,
-              sourceUrlScrappedFrom: row.sourceUrlScrappedFrom,
-              pageIndexScrappedFrom: parseInt(row.pageIndexScrappedFrom, 10),
-              metadata: {
-                title: row.title,
-                description: row.description,
-                keywords: row.keywords.split(', ').map((keyword: string) => keyword.trim()),
-                fileName: row.filename,
-              },
-              path: assetPath,
-            }
-            assets.push(asset)
-          } else {
-            console.log('file not found for row :', row)
-          }
-        })
-        .on('end', () => {
-          console.log(`Parsed and filtered CSV: ${csvFileName}, valid rows: ${assets.length}`)
-          resolve()
-        })
+    await this.writeDataToCsv(
+      csvAssetFilePath,
+      ['title', 'description', 'keywords', 'filename', 'pageIndexScrappedFrom', 'sourceUrlScrappedFrom', 'path'],
+      outputAssetsRows
     )
 
-    await new Promise<void>((resolve, reject) => {
-      const ws = writeToPath(
-        csvFilePath,
-        assets.map((asset) => ({
-          title: asset.metadata?.title || '',
-          description: asset.metadata?.description || '',
-          keywords: asset.metadata?.keywords?.join(', ') || '',
-          filename: asset.metadata?.fileName || '',
-          pageIndexScrappedFrom: asset.pageIndexScrappedFrom,
-          sourceUrlScrappedFrom: asset.sourceUrlScrappedFrom,
-          path: asset.path || '',
-        })),
-        { headers: true }
-      )
-      ws.on('error', reject)
-      ws.on('finish', () => {
-        console.log(`Filtered CSV successfully written to ${csvFilePath}`)
-        resolve()
-      })
+    console.log('Filtered CSV successfully written to', csvAssetFilePath)
+    return validAssets
+  }
+
+  /** this function is used to cleanup the adobe stock csv
+   * @param csvAdobeStockFileName - name of the CSV file to be cleaned up
+   * @param validAssets - array of FreepikAsset returned from cleanupAssetsFromCSV
+   * @returns - void
+   */
+  cleanupAdobeStockCSV = async (csvAdobeStockFileName: string, validAssets: FreepikAsset[]) => {
+    if (!csvAdobeStockFileName) {
+      throw new Error('Adobe stock CSV file name is required.')
+    }
+    if (!validAssets || validAssets.length === 0) {
+      throw new Error('No valid assets to write to Adobe stock CSV.')
+    }
+
+    const csvAdobeStockFilePath = path.join(OUTPUT_DIR, csvAdobeStockFileName)
+
+    const outputAdobeStockRows = validAssets.map((asset) => {
+      const originalFileName = asset.metadata?.fileName || ''
+      const newFileName = originalFileName.replace(/\.png$/i, '.jpg')
+      return {
+        Filename: newFileName,
+        Title: asset.metadata?.description || '',
+        Keywords: asset.metadata?.keywords?.join(', ') || '',
+        Category: '',
+        Releases: '',
+      }
     })
 
-    return assets
+    await this.writeDataToCsv(csvAdobeStockFilePath, ['Filename', 'Title', 'Keywords', 'Category', 'Releases'], outputAdobeStockRows)
+    console.log('Filtered Adobe CSV successfully written to', csvAdobeStockFilePath)
   }
 }

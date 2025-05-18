@@ -31,6 +31,7 @@ export class ScrapingController {
       }
 
       let imageCount = 0
+      let csvFilesPath: CsvFilesPath = { assetsFilePath: '', adobeStockFilePath: '' }
 
       // Process assets with Gemini AI
       for (const asset of assets) {
@@ -59,11 +60,14 @@ export class ScrapingController {
         }
         imageCount++
         await this.quotaService.incrementTodayCount()
+
+        csvFilesPath = await this.csvService.writeAssetsToCSV([asset])
+
         // Add delay between each iteration to respect RPM
         await new Promise((resolve) => setTimeout(resolve, 6000)) // wait 6 seconds
       }
 
-      const validAssets = assets.filter((asset) => asset.path && asset.metadata && asset.metadata.fileName)
+      //const validAssets = assets.filter((asset) => asset.path && asset.metadata && asset.metadata.fileName)
       // const validAssets: FreepikAsset[] = [
       //   {
       //     name: 'Sample Asset',
@@ -78,7 +82,8 @@ export class ScrapingController {
       //     },
       //   },
       // ]
-      const csvFilesPath = await this.csvService.writeAssetsToCSV(validAssets)
+      const validAssets = assets.filter((asset) => asset.path && asset.metadata && asset.metadata.fileName)
+      console.log('Processing Finished Successfully')
       res.json({ success: true, data: { assets: validAssets, csvFilesPath } })
     } catch (error: any) {
       res.status(500).json({ success: false, message: error.message })
@@ -88,8 +93,13 @@ export class ScrapingController {
   async cleanupCSV(req: Request, res: Response<ApiResponse<{ assets?: FreepikAsset[] }>>) {
     try {
       const csvFileName = ENV.CSV_FILENAME_TO_CLEANUP
-      const assets = await this.csvService.cleanupAssetsFromCSV(csvFileName)
-      res.json({ success: true, data: { assets } })
+      const csvAdobeStockFileName = ENV.ADOBE_STOCK_CSV_FILENAME_TO_CLEANUP
+      if (!csvFileName || !csvAdobeStockFileName) {
+        return res.status(400).json({ success: false, message: 'CSV file names are not defined in the environment variables.' })
+      }
+      const cleanedAssets = await this.csvService.cleanupAssetsFromCSV(csvFileName)
+      await this.csvService.cleanupAdobeStockCSV(csvAdobeStockFileName, cleanedAssets)
+      res.json({ success: true, data: { assets: cleanedAssets } })
     } catch (error: any) {
       res.status(500).json({ success: false, message: error.message })
     }
