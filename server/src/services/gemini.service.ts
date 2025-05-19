@@ -169,7 +169,7 @@ export class GeminiService {
       - Encourages negative space and avoids background clutter
       - Avoids words like 'realistic', 'detailed', or 'textured'
       - Uses simple adjectives like "clean", "basic", "minimal"
-      - Does NOT include text, branding, logos, or watermarks
+      - Must not contain any text elements, titles, letters, numbers, logos, branding, watermarks, or written symbols of any kind
       - Must be high-resolution (300 DPI)
       ${extraNotes}
 
@@ -257,8 +257,8 @@ export class GeminiService {
       Based on the following detailed prompt, produce a JSON object with the following keys:
 
       1) title: a concise, SEO-friendly title (maximum 70 characters),
-      2) description: a factual, objective 2–3 sentence description of the image content. Do NOT mention usage rights, licensing, commercial use, or watermarks (maximum 200 characters).
-      3) keywords: an array of up to 50 relevant, comma-separated keywords suitable for stock search. Avoid terms related to licensing such as "no watermark", "free to use", or "commercial use".
+      2) description: a factual, objective 2–3 sentence description of the image content. Do NOT mention usage rights, licensing, commercial use, or watermarks (maximum 190 characters).
+      3) keywords: an array of up to 50 relevant, comma-separated keywords suitable for stock search. Avoid terms related to licensing such as "no watermark", "free to use", "royalty free", "license", "300 DPI" or "commercial use".
 
       Prompt:
       "${enhancedPrompt}"`
@@ -280,7 +280,14 @@ export class GeminiService {
       const metadata = JSON.parse(jsonStr)
       const disallowedTerms = ['commercial use', 'no watermark', 'free to use', 'royalty free', 'license']
       const keywords: string[] = (metadata.keywords || []).filter((kw: string) => !disallowedTerms.some((term) => kw.toLowerCase().includes(term)))
-      const description: string = metadata.description?.replace(new RegExp(disallowedTerms.join('|'), 'gi'), '').trim()
+      // Clean and smart-truncate description
+      let description = (metadata.description || '').replace(new RegExp(disallowedTerms.join('|'), 'gi'), '').trim()
+
+      if (description.length > 190) {
+        const truncated = description.slice(0, 190)
+        const lastSpace = truncated.lastIndexOf(' ')
+        description = truncated.slice(0, lastSpace).trim()
+      }
 
       return {
         title: metadata.title?.trim(),
